@@ -2,7 +2,6 @@ pandas
 openpyxl
 fpdf2
 pyyaml
-pytest
 easyocr
 opencv-python-headless
 requests

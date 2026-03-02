@@ -1,53 +1,43 @@
 <div align="center">
 
-# 📄 Invoice Generator
+# Invoice Generator
 
 **Affordable GST-compliant invoicing for India's small businesses.**
 
 [![Python](https://img.shields.io/badge/Python-3.8+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
 [![License](https://img.shields.io/badge/License-MIT-22c55e?style=for-the-badge)](LICENSE)
-[![Tests](https://img.shields.io/badge/Tests-62%20passed-22c55e?style=for-the-badge)]()
-[![Version](https://img.shields.io/badge/Version-0.2.0-6366f1?style=for-the-badge)]()
+[![Version](https://img.shields.io/badge/Version-0.3.0-6366f1?style=for-the-badge)]()
 
 ---
 
 *Small businesses in India can't afford big SaaS invoicing software.*
-*Upload your raw delivery data → get a digitized, GST-compliant tax invoice instantly.*
-
-**🇮🇳 Promoting Digital Bharat — one invoice at a time.**
+*Upload your raw delivery data or photos of handwritten challans → get a digitized, GST-compliant tax invoice instantly.*
 
 </div>
 
 ---
 
-## 🎯 The Problem
+## The Problem
 
-Millions of small businesses across India — from building material suppliers to kirana stores — still rely on handwritten invoices. They can't afford ₹5,000–₹20,000/year SaaS subscriptions. Without proper GST invoices, they risk non-compliance with tax laws.
+Millions of small businesses across India — from building material suppliers to kirana stores — still rely on handwritten invoices. They can't afford expensive SaaS subscriptions. Without proper GST invoices, they risk non-compliance with tax laws.
 
-**Invoice Generator** bridges this gap — a free, open-source tool that turns raw delivery records into professional, GST-compliant tax invoices in seconds.
-
----
-
-## ✨ Features
-
-| Feature | Description |
-|---------|-------------|
-| 📊 **Instant Generation** | Upload Excel data → download formatted invoice |
-| 📄 **PDF Export** | Generate print-ready PDF invoices alongside Excel |
-| 📦 **Batch Processing** | Process entire folders with auto-incrementing invoice numbers |
-| ⚙️ **Config File** | Customize company, buyer, bank, GST via `config.yaml` — no code editing |
-| 🧾 **GST Compliant** | Auto-calculates CGST + SGST with HSN codes |
-| 🧱 **Any Material** | Dynamic — works with any material types, no hardcoding |
-| 📍 **Multi-Site** | Handles deliveries across multiple sites per invoice |
-| 🔢 **Per-Material Rates** | Supports different rates for each material at each site |
-| 📅 **Smart Dates** | Auto-detects fiscal year, handles multiple date formats |
-| 📋 **Two-Sheet Output** | Professional Bill sheet + detailed List sheet |
-| 🛡️ **Robust** | 62 tests covering edge cases and failure scenarios |
-| 💻 **Cross-Platform** | Works on Windows, macOS, and Linux |
+**Invoice Generator** bridges this gap — a free, open-source tool that turns raw delivery records (Excel files or photos of challans) into professional, GST-compliant tax invoices in seconds.
 
 ---
 
-## 🚀 Quick Start
+## Features
+
+- **Excel & Image Input** — Upload Excel data or photos of handwritten/printed challans
+- **PDF Export** — Generate print-ready PDF invoices alongside Excel
+- **Batch Processing** — Process entire folders with auto-incrementing invoice numbers
+- **Config File** — Customize company, buyer, bank, GST via `config.yaml`
+- **GST Compliant** — Auto-calculates CGST + SGST with HSN codes
+- **AI/OCR Pipeline** — 3-tier fallback: Vision LLM → OCR + LLM → Pure OCR + heuristics
+- **Smart Dates** — Auto-detects fiscal year, handles multiple date formats
+
+---
+
+## Quick Start
 
 ### 1. Clone & Install
 
@@ -69,10 +59,10 @@ Create an Excel file (`.xlsx` or `.xls`) with these columns:
 | `Site` | Delivery site | `Malad` |
 | `Material` | Material type | `10 mm` |
 | `Quantity` | Qty (tonnes) | `35.61` |
-| `Rate` | ₹ per tonne | `380` |
+| `Rate` | Per tonne | `380` |
 | `Per` | Unit | `Tonne` |
 
-> 💡 Sample files included in [`Example Data/`](Example%20Data/)
+> Sample files included in [`Example Data/`](Example%20Data/)
 
 ### 3. Generate
 
@@ -95,7 +85,7 @@ python3 -c "from invoice_generator.cli import main_generator; main_generator()" 
 
 ---
 
-## ⚙️ Configuration
+## Configuration
 
 Customize `config.yaml` for your business — **no code editing required**:
 
@@ -128,14 +118,9 @@ gst:
 unit: "Tonne"
 ```
 
-Use a custom config file:
-```bash
-python3 -c "from invoice_generator.cli import main_generator; main_generator()" -i 178 --config my_config.yaml
-```
-
 ---
 
-## 🔧 Python Module API
+## Python Module API
 
 ```python
 from invoice_generator import generate_invoice, generate_pdf, batch_process
@@ -157,54 +142,9 @@ results = batch_process("./data/", start_num=100, pdf=True, config=config)
 
 ---
 
-## 🧪 Testing
+## Architecture Pipeline
 
-Run the full test suite:
-
-```bash
-pytest tests/ -v
-```
-
-```
-62 passed in 1.49s
-```
-
-Tests cover:
-- ✅ Helper functions (date parsing, formatting, rounding, sanitization)
-- ✅ Config loading (YAML, defaults, missing files)
-- ✅ Data processing (single/multi site, rates, totals, GST)
-- ✅ Failure scenarios (missing files, bad columns, non-numeric data, empty files)
-- ✅ Excel generation (sheets, amounts, formulas, edge cases)
-- ✅ PDF generation (output, file saving, format validation)
-- ✅ Batch processing (auto-numbering, error handling, empty dirs)
-
----
-
-## 📁 Project Structure
-
-```
-invoice-generator/
-├── src/invoice_generator/
-│   ├── core/              # Config, data processing, and image utility
-│   ├── extractors/        # Image processors (JSON parsing, LLM, OCR)
-│   ├── renderers/         # Excel and PDF rendering
-│   ├── __init__.py        # Public module interface
-│   ├── cli.py             # Command Line Interface parsers
-│   ├── extraction.py      # Image-to-Invoice pipeline
-│   └── generation.py      # Excel-to-Invoice pipeline
-├── config.yaml             # Business configuration (customizable)
-├── requirements.txt        # Dependencies
-├── Example Data/           # Sample data for testing
-├── .gitignore
-├── README.md
-└── features.md             # Detailed feature logs
-```
-
----
-
-## 🏗️ Architecture Pipeline
-
-The `v0.3.0` image processor leverages a highly resilient 3-tier fallback architecture to ensure maximal extraction success under varying conditions (like strict API rate limits, missing keys, or LLM failures):
+The v0.3 image processor uses a 3-tier fallback architecture to ensure maximal extraction success under varying conditions (API rate limits, missing keys, or LLM failures):
 
 ```mermaid
 graph TD
@@ -213,32 +153,32 @@ graph TD
     classDef offline fill:#fef2f2,stroke:#ef4444,stroke-width:2px,color:#000;
     classDef output fill:#f0fdf4,stroke:#22c55e,stroke-width:2px,color:#000;
 
-    Input[📸 Raw Challan Image] --> T1
+    Input[Raw Challan Image] --> T1
 
     subgraph "Tier 1: Vision (Primary)"
-    T1[🤖 OpenRouter Vision LLMs]
+    T1[OpenRouter Vision LLMs]
     end
 
     subgraph "Tier 2: OCR + Text LLM (Fallback)"
-    T2_OCR[🔍 EasyOCR Extraction]
-    T2_LLM[🧠 LLM Text Structuring]
+    T2_OCR[EasyOCR Extraction]
+    T2_LLM[LLM Text Structuring]
     T2_OCR --> T2_LLM
     end
 
     subgraph "Tier 3: Offline (Safety Net)"
-    T3[⚙️ Pure OCR + Heuristics]
+    T3[Pure OCR + Heuristics]
     end
 
-    T1 -- Success --> Valid[🛡️ Data Validation & Syncing]
+    T1 -- Success --> Valid[Data Validation & Syncing]
     T1 -- Failure/Limit --> T2_OCR
-    
+
     T2_LLM -- Success --> Valid
     T2_LLM -- Failure/No Key --> T3
-    
+
     T3 --> Valid
 
-    Valid --> Excel[📊 Excel Generator]
-    Excel --> PDF[📄 PDF Engine]
+    Valid --> Excel[Excel Generator]
+    Excel --> PDF[PDF Engine]
 
     Excel -.-> Out1[GST Excel Sheet]
     PDF -.-> Out2[GST PDF Invoice]
@@ -251,24 +191,38 @@ graph TD
 
 ---
 
-## 🛡️ Edge Cases Handled
+## Project Structure
 
-- ✅ Multiple date formats (`dd/mm/yyyy`, `yyyy-mm-dd`, `dd-mm-yyyy`, etc.)
-- ✅ Non-numeric or missing values in Quantity/Rate (clear error with row numbers)
-- ✅ Different rates per material at the same site
-- ✅ Materials present at some sites but not others (blank, not zero)
-- ✅ Single-day deliveries (shows date, not redundant range)
-- ✅ Negative quantities for returns/credits (warns, doesn't block)
-- ✅ Special characters in site/material names
-- ✅ Both `.xlsx` and `.xls` file formats
-- ✅ Proper conventional rounding (0.5 rounds up, not banker's rounding)
-- ✅ Float precision in GST calculations (rounded to 2 decimal places)
-- ✅ Sheet names >31 characters (auto-truncated)
-- ✅ Missing config file (falls back to defaults)
+```
+invoice-generator/
+├── src/invoice_generator/
+│   ├── core/
+│   │   ├── config.py              # YAML config loader & defaults
+│   │   ├── data_processing.py     # Data processing & GST calculations
+│   │   └── image_utils.py         # Image preprocessing & base64 encoding
+│   ├── extractors/
+│   │   ├── json_parser.py         # JSON repair & parsing from LLM output
+│   │   ├── llm_client.py          # OpenRouter LLM API client
+│   │   ├── ocr_engine.py          # EasyOCR extraction engine
+│   │   └── validator.py           # Data validation & syncing
+│   ├── renderers/
+│   │   ├── excel.py               # Excel invoice rendering engine
+│   │   └── pdf.py                 # PDF invoice rendering
+│   ├── __init__.py                # Public module API & exports
+│   ├── cli.py                     # CLI argument parsing (argparse)
+│   ├── extraction.py              # Image-to-Invoice pipeline
+│   └── generation.py              # Excel-to-Invoice pipeline
+├── Example Data/                   # Sample .xlsx input files
+├── config.yaml                     # Business configuration
+├── requirements.txt                # Python dependencies
+├── todo.md                         # Development roadmap
+├── .gitignore
+└── README.md
+```
 
 ---
 
-## 📋 CLI Reference
+## CLI Reference
 
 ```
 usage: main_generator [-h] [-i INVOICE] [--input INPUT] [--output OUTPUT]
@@ -289,60 +243,66 @@ options:
 
 ---
 
-## 🛣️ Roadmap
+## Roadmap
 
 - [x] ~~Config file for business details~~
 - [x] ~~PDF export~~
 - [x] ~~Batch processing with auto-numbering~~
-- [x] ~~Test suite~~
-- [x] ~~📸 OCR support — upload photos of handwritten bills~~
-- [ ] 🌐 Web interface — browser-based upload & download
-- [ ] 📧 Email integration — auto-send invoices to buyers
-- [ ] 🔄 IGST support — inter-state invoice detection
+- [x] ~~OCR support — upload photos of handwritten bills~~
+- [ ] Web interface — browser-based upload & download
+- [ ] Email integration — auto-send invoices to buyers
+- [ ] IGST support — inter-state invoice detection
 
 ---
 
-## 📝 Changelog
+## Changelog
 
-### v0.2.0 — 2025-03-02
+### v0.3.0 — March 2026
 
 **New Features:**
-- 📄 **PDF Export** — generate print-ready PDF alongside Excel (`--pdf` flag)
-- ⚙️ **Config File** — `config.yaml` for company/buyer/bank/GST customization
-- 📦 **Batch Processing** — process entire folders with `--batch` and `--start`
-- 🔢 **Auto Invoice Numbering** — sequential numbering in batch mode
-- 🖥️ **CLI with argparse** — proper flags: `-i`, `--pdf`, `--batch`, `--config`
-- 🧪 **Test Suite** — 62 pytest cases covering all features and edge cases
-- 📂 **Multiple Test Datasets** — 5 Excel files for various scenarios
+- **Image Processor (AI/OCR)** — Extract structured data directly from photos of handwritten or printed delivery challans
+- **3-Tier Fallback Architecture** — OpenRouter Vision LLMs → OCR + LLM text structuring → Pure OCR with heuristics
+- **Batch Image Processing** — Create independent invoices recursively from photos using `--batch`
+
+**Improvements:**
+- LLM model cascading, exponential backoff, JSON repairs
+- Exif auto-rotation, automatic deduplication, totals row filtering
+- Reorganized project into modular `src/invoice_generator/` package
+
+### v0.2.0 — March 2025
+
+**New Features:**
+- PDF export (`--pdf` flag)
+- Config file — `config.yaml` for company/buyer/bank/GST customization
+- Batch processing — `--batch` and `--start` flags
+- CLI with argparse — proper flags: `-i`, `--pdf`, `--batch`, `--config`
 
 **Improvements:**
 - Extracted data processing into `process_input_data()` for reuse
 - Config-driven templates (company, buyer, bank, GST rates from YAML)
 - All features available as both CLI and importable Python functions
 
-### v0.1.0 — 2025-03-02
+### v0.1.0 — March 2025
 
 **Initial Release:**
 - Core invoice generation engine
 - Dynamic material support (no hardcoded lists)
 - CGST/SGST auto-calculation with HSN codes
 - Multi-site support with fiscal year detection
-- Robust edge case handling (13 scenarios)
 - Cross-platform date formatting
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
 1. Fork the repository
 2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Run tests (`pytest tests/ -v`)
-4. Commit your changes (`git commit -m 'Add amazing feature'`)
-5. Push and open a Pull Request
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push and open a Pull Request
 
 ---
 
-## 📝 License
+## License
 
 MIT — free to use, modify, and distribute.
 
@@ -350,15 +310,8 @@ MIT — free to use, modify, and distribute.
 
 <div align="center">
 
-**Made with ❤️ for India's small businesses**
+**Made with care for India's small businesses**
 
-*If this tool helps your business, consider ⭐ starring the repo!*
+*If this tool helps your business, consider starring the repo!*
 
 </div>
-
-### v0.3.0 (March 2026)
-* **Image Processor (AI/OCR):** Added `src/invoice_generator/image_processor.py` to extract structured data directly from photos of handwritten or printed delivery challans.
-* **Architecture:** 3-tier fallback execution: OpenRouter Free LLM Vision models -> OCR (EasyOCR) + LLM text structuring -> pure OCR with python heuristics.
-* **Workarounds implemented:** LLM model cascading, exponential backoff, JSON repairs, Exif auto-rotation, automatic deduplication, and totals row filtering.
-* **Batch processing for images:** Create independent invoices recursively through photos using `--batch`.
-* **Refactoring:** Reorganized project into modular `src/invoice_generator` python package for better developer experience and code standard compliance. Added 39 image processing tests.
