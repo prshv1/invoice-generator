@@ -202,6 +202,55 @@ invoice-generator/
 
 ---
 
+## 🏗️ Architecture Pipeline
+
+The `v0.3.0` image processor leverages a highly resilient 3-tier fallback architecture to ensure maximal extraction success under varying conditions (like strict API rate limits, missing keys, or LLM failures):
+
+```mermaid
+graph TD
+    classDef primary fill:#eef2ff,stroke:#6366f1,stroke-width:2px,color:#000;
+    classDef fallback fill:#fdf4ff,stroke:#d946ef,stroke-width:2px,color:#000;
+    classDef offline fill:#fef2f2,stroke:#ef4444,stroke-width:2px,color:#000;
+    classDef output fill:#f0fdf4,stroke:#22c55e,stroke-width:2px,color:#000;
+
+    Input[📸 Raw Challan Image] --> T1
+
+    subgraph "Tier 1: Vision (Primary)"
+    T1[🤖 OpenRouter Vision LLMs]
+    end
+
+    subgraph "Tier 2: OCR + Text LLM (Fallback)"
+    T2_OCR[🔍 EasyOCR Extraction]
+    T2_LLM[🧠 LLM Text Structuring]
+    T2_OCR --> T2_LLM
+    end
+
+    subgraph "Tier 3: Offline (Safety Net)"
+    T3[⚙️ Pure OCR + Heuristics]
+    end
+
+    T1 -- Success --> Valid[🛡️ Data Validation & Syncing]
+    T1 -- Failure/Limit --> T2_OCR
+    
+    T2_LLM -- Success --> Valid
+    T2_LLM -- Failure/No Key --> T3
+    
+    T3 --> Valid
+
+    Valid --> Excel[📊 Excel Generator]
+    Excel --> PDF[📄 PDF Engine]
+
+    Excel -.-> Out1[GST Excel Sheet]
+    PDF -.-> Out2[GST PDF Invoice]
+
+    class T1 primary
+    class T2_OCR,T2_LLM fallback
+    class T3 offline
+    class Out1,Out2 output
+```
+
+---
+
 ## 🛡️ Edge Cases Handled
 
 - ✅ Multiple date formats (`dd/mm/yyyy`, `yyyy-mm-dd`, `dd-mm-yyyy`, etc.)
