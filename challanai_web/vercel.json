@@ -1,8 +1,5 @@
 {
   "rewrites": [
-    {
-      "source": "/api/:path*",
-      "destination": "https://challanai-135344418297.asia-south1.run.app/:path*"
-    }
+    { "source": "/api/:path*", "destination": "/api/proxy" }
   ]
 }
