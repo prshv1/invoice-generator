@@ -78,19 +78,19 @@ Create an Excel file (`.xlsx` or `.xls`) with these columns:
 
 ```bash
 # Interactive mode
-python3 generate_invoices.py
+python3 src/invoice_generator/generator.py
 
 # Specify invoice number
-python3 generate_invoices.py -i 178
+python3 src/invoice_generator/generator.py -i 178
 
 # Generate Excel + PDF
-python3 generate_invoices.py -i 178 --pdf
+python3 src/invoice_generator/generator.py -i 178 --pdf
 
 # Batch process all files in a folder
-python3 generate_invoices.py --batch ./data/ --start 178
+python3 src/invoice_generator/generator.py --batch ./data/ --start 178
 
 # Batch with PDF output
-python3 generate_invoices.py --batch ./data/ --start 178 --pdf --output-dir ./invoices/
+python3 src/invoice_generator/generator.py --batch ./data/ --start 178 --pdf --output-dir ./invoices/
 ```
 
 ---
@@ -130,7 +130,7 @@ unit: "Tonne"
 
 Use a custom config file:
 ```bash
-python3 generate_invoices.py -i 178 --config my_config.yaml
+python3 src/invoice_generator/generator.py -i 178 --config my_config.yaml
 ```
 
 ---
@@ -184,7 +184,7 @@ Tests cover:
 
 ```
 invoice-generator/
-├── generate_invoices.py    # Core engine (CLI + module API)
+├── src/invoice_generator/generator.py    # Core engine (CLI + module API)
 ├── config.yaml             # Business configuration (customizable)
 ├── requirements.txt        # Dependencies
 ├── Example Data/
@@ -221,7 +221,7 @@ invoice-generator/
 ## 📋 CLI Reference
 
 ```
-usage: generate_invoices.py [-h] [-i INVOICE] [--input INPUT] [--output OUTPUT]
+usage: src/invoice_generator/generator.py [-h] [-i INVOICE] [--input INPUT] [--output OUTPUT]
                             [--pdf] [--batch DIR] [--start START]
                             [--output-dir DIR] [--config CONFIG] [--version]
 
@@ -305,3 +305,10 @@ MIT — free to use, modify, and distribute.
 *If this tool helps your business, consider ⭐ starring the repo!*
 
 </div>
+
+### v0.3.0 (March 2026)
+* **Image Processor (AI/OCR):** Added `src/invoice_generator/image_processor.py` to extract structured data directly from photos of handwritten or printed delivery challans.
+* **Architecture:** 3-tier fallback execution: OpenRouter Free LLM Vision models -> OCR (EasyOCR) + LLM text structuring -> pure OCR with python heuristics.
+* **Workarounds implemented:** LLM model cascading, exponential backoff, JSON repairs, Exif auto-rotation, automatic deduplication, and totals row filtering.
+* **Batch processing for images:** Create independent invoices recursively through photos using `--batch`.
+* **Refactoring:** Reorganized project into modular `src/invoice_generator` python package for better developer experience and code standard compliance. Added 39 image processing tests.

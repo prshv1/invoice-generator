@@ -16,9 +16,9 @@ from openpyxl import Workbook, load_workbook
 
 # Add project root to path
 import sys
-sys.path.insert(0, str(Path(__file__).parent.parent))
+sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
-from generate_invoices import (
+from invoice_generator.generator import (
     __version__,
     batch_process,
     format_date_short,

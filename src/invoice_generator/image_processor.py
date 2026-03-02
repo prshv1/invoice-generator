@@ -1131,7 +1131,7 @@ def batch_process_images(
     Returns:
         List of BatchResult objects, one per image processed.
     """
-    from generate_invoices import generate_invoice, generate_pdf
+    from .generator import generate_invoice, generate_pdf
 
     input_directory = Path(input_dir)
     output_directory = Path(output_dir) if output_dir else input_directory
@@ -1230,7 +1230,7 @@ def images_to_invoice(
     Returns:
         Tuple of (openpyxl.Workbook, pdf_bytes_or_None).
     """
-    from generate_invoices import generate_invoice, generate_pdf as gen_pdf
+    from .generator import generate_invoice, generate_pdf as gen_pdf
 
     # Extract data from all images
     combined_dataframe = extract_from_images(images, api_key=api_key, **kwargs)
@@ -1322,7 +1322,7 @@ def main() -> None:
     # Load config if specified
     config = None
     if args.config:
-        from generate_invoices import load_config
+        from .generator import load_config
         config = load_config(args.config)
 
     try:
@@ -1401,7 +1401,7 @@ def main() -> None:
 
             # Generate invoice if requested
             if args.invoice:
-                from generate_invoices import generate_invoice, generate_pdf
+                from .generator import generate_invoice, generate_pdf
 
                 excel_out = f"Invoice_{args.invoice}.xlsx"
                 workbook = generate_invoice(args.output, args.invoice, config)

@@ -16,9 +16,9 @@ import pandas as pd
 import pytest
 
 import sys
-sys.path.insert(0, str(Path(__file__).parent.parent))
+sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
-from image_processor import (
+from invoice_generator.image_processor import (
     BatchResult,
     OCRDetection,
     OUTPUT_COLUMNS,
@@ -329,18 +329,18 @@ class TestPreprocessing:
         bad_file = tmp_path / "test.docx"
         bad_file.write_text("not an image")
         with pytest.raises(ValueError, match="Unsupported image format"):
-            from image_processor import preprocess_image
+            from invoice_generator.image_processor import preprocess_image
             preprocess_image(bad_file)
 
     def test_preprocessing_returns_valid_jpeg(self, test_image):
-        from image_processor import preprocess_image
+        from invoice_generator.image_processor import preprocess_image
         jpeg_bytes = preprocess_image(test_image)
         assert isinstance(jpeg_bytes, bytes)
         assert len(jpeg_bytes) > 0
         assert jpeg_bytes[:2] == b'\xff\xd8'  # JPEG magic bytes
 
     def test_base64_encoding_produces_valid_string(self, test_image):
-        from image_processor import encode_image_for_llm
+        from invoice_generator.image_processor import encode_image_for_llm
         base64_string = encode_image_for_llm(test_image)
         assert isinstance(base64_string, str)
         decoded_bytes = base64.b64decode(base64_string)
