@@ -3,3 +3,7 @@ openpyxl
 fpdf2
 pyyaml
 pytest
+easyocr
+opencv-python-headless
+requests
+python-dotenv
