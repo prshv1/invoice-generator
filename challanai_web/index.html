@@ -1,427 +1,139 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ChallanAI — Handwritten Challans to GST Invoices</title>
+  <meta name="description" content="Turn handwritten challans into GST-compliant invoices instantly using AI and OCR. Built for India's small businesses.">
+  <link rel="stylesheet" href="styles.css">
+  <!-- Vercel Analytics -->
   <script defer src="/_vercel/insights/script.js"></script>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ChallanAI — Handwritten Challans to GST Invoices</title>
-<style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-  :root {
-    --bg: #0a0a0f;
-    --surface: #12121a;
-    --surface-2: #1a1a26;
-    --border: #2a2a3a;
-    --border-hover: #4a4a6a;
-    --text: #e4e4ef;
-    --text-muted: #8888a0;
-    --accent: #6366f1;
-    --accent-glow: rgba(99, 102, 241, 0.25);
-    --green: #22c55e;
-    --green-glow: rgba(34, 197, 94, 0.2);
-    --red: #ef4444;
-    --radius: 12px;
-  }
-
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    line-height: 1.6;
-  }
-
-  .container { max-width: 720px; margin: 0 auto; padding: 2rem 1.5rem; }
-
-  /* Hero */
-  .hero { text-align: center; padding: 3rem 0 2rem; }
-  .hero .logo { font-size: 2.5rem; font-weight: 800; letter-spacing: -1px; }
-  .hero .logo span { color: var(--accent); }
-  .hero .tagline {
-    font-size: 1.15rem;
-    color: var(--text-muted);
-    margin-top: 0.75rem;
-    max-width: 480px;
-    margin-left: auto;
-    margin-right: auto;
-  }
-  .hero .badges { display: flex; gap: 0.5rem; justify-content: center; margin-top: 1.25rem; flex-wrap: wrap; }
-  .badge {
-    display: inline-block;
-    padding: 0.25rem 0.75rem;
-    border-radius: 100px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    border: 1px solid var(--border);
-    color: var(--text-muted);
-    background: var(--surface);
-  }
-
-  /* Card */
-  .card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 1.75rem;
-    margin-bottom: 1.25rem;
-  }
-  .card h2 { font-size: 1rem; font-weight: 600; margin-bottom: 1rem; }
-
-  /* Drop zone */
-  .dropzone {
-    border: 2px dashed var(--border);
-    border-radius: var(--radius);
-    padding: 2.5rem 1rem;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.2s;
-    position: relative;
-  }
-  .dropzone:hover, .dropzone.dragover {
-    border-color: var(--accent);
-    background: var(--accent-glow);
-  }
-  .dropzone input { display: none; }
-  .dropzone .icon { font-size: 2rem; margin-bottom: 0.5rem; }
-  .dropzone .label { color: var(--text-muted); font-size: 0.9rem; }
-  .dropzone .label strong { color: var(--accent); }
-  .dropzone .file-name {
-    margin-top: 0.75rem;
-    font-size: 0.85rem;
-    color: var(--green);
-    font-weight: 600;
-  }
-
-  /* Form controls */
-  .form-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-    margin-top: 1rem;
-  }
-  @media (max-width: 480px) { .form-row { grid-template-columns: 1fr; } }
-
-  .form-group label {
-    display: block;
-    font-size: 0.8rem;
-    color: var(--text-muted);
-    margin-bottom: 0.35rem;
-    font-weight: 500;
-  }
-  .form-group input, .form-group select {
-    width: 100%;
-    padding: 0.6rem 0.75rem;
-    background: var(--surface-2);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    color: var(--text);
-    font-size: 0.9rem;
-    outline: none;
-    transition: border-color 0.2s;
-  }
-  .form-group input:focus, .form-group select:focus { border-color: var(--accent); }
-  .form-group input::placeholder { color: var(--text-muted); }
-
-  /* Toggle */
-  .toggle-row { display: flex; align-items: center; gap: 0.75rem; margin-top: 1rem; }
-  .toggle {
-    position: relative;
-    width: 44px;
-    height: 24px;
-    cursor: pointer;
-  }
-  .toggle input { display: none; }
-  .toggle .slider {
-    position: absolute;
-    inset: 0;
-    background: var(--surface-2);
-    border: 1px solid var(--border);
-    border-radius: 100px;
-    transition: all 0.2s;
-  }
-  .toggle .slider::before {
-    content: '';
-    position: absolute;
-    width: 18px;
-    height: 18px;
-    left: 2px;
-    top: 2px;
-    background: var(--text-muted);
-    border-radius: 50%;
-    transition: all 0.2s;
-  }
-  .toggle input:checked + .slider { background: var(--accent); border-color: var(--accent); }
-  .toggle input:checked + .slider::before { transform: translateX(20px); background: #fff; }
-  .toggle-label { font-size: 0.85rem; color: var(--text-muted); }
-
-  /* Buttons */
-  .btn {
-    width: 100%;
-    padding: 0.8rem;
-    border: none;
-    border-radius: 8px;
-    font-size: 0.95rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
-    margin-top: 1.25rem;
-  }
-  .btn-primary {
-    background: var(--accent);
-    color: #fff;
-  }
-  .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
-  .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
-
-  .btn-success {
-    background: var(--green);
-    color: #fff;
-    display: none;
-  }
-  .btn-success:hover { opacity: 0.9; }
-
-  /* Status */
-  .status {
-    margin-top: 1rem;
-    padding: 0.75rem 1rem;
-    border-radius: 8px;
-    font-size: 0.85rem;
-    display: none;
-  }
-  .status.loading { display: block; background: var(--accent-glow); color: var(--accent); border: 1px solid var(--accent); }
-  .status.success { display: block; background: var(--green-glow); color: var(--green); border: 1px solid var(--green); }
-  .status.error { display: block; background: rgba(239,68,68,0.1); color: var(--red); border: 1px solid var(--red); }
-
-  /* Spinner */
-  @keyframes spin { to { transform: rotate(360deg); } }
-  .spinner {
-    display: inline-block;
-    width: 14px;
-    height: 14px;
-    border: 2px solid currentColor;
-    border-top-color: transparent;
-    border-radius: 50%;
-    animation: spin 0.6s linear infinite;
-    vertical-align: middle;
-    margin-right: 0.5rem;
-  }
-
-  /* Footer */
-  .footer {
-    text-align: center;
-    padding: 2rem 0;
-    color: var(--text-muted);
-    font-size: 0.8rem;
-  }
-  .footer a { color: var(--accent); text-decoration: none; }
-
-  /* Features mini */
-  .features {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 0.75rem;
-    margin-top: 1.5rem;
-  }
-  @media (max-width: 480px) { .features { grid-template-columns: 1fr; } }
-  .feature {
-    text-align: center;
-    padding: 1rem 0.5rem;
-    border-radius: var(--radius);
-    background: var(--surface);
-    border: 1px solid var(--border);
-  }
-  .feature .f-icon { font-size: 1.5rem; margin-bottom: 0.35rem; }
-  .feature .f-title { font-size: 0.8rem; font-weight: 600; }
-  .feature .f-desc { font-size: 0.7rem; color: var(--text-muted); margin-top: 0.15rem; }
-</style>
+  <!-- Vercel Speed Insights -->
+  <script defer src="/_vercel/speed-insights/script.js"></script>
 </head>
 <body>
 
-<div class="container">
-  <div class="hero">
-    <div class="logo">Challan<span>AI</span></div>
-    <p class="tagline">Turn handwritten challans into GST invoices instantly</p>
-    <div class="badges">
-      <span class="badge">GST Compliant</span>
-      <span class="badge">AI + OCR</span>
-      <span class="badge">Excel & PDF</span>
-    </div>
-  </div>
+  <div class="ambient-glow"></div>
 
-  <div class="features">
-    <div class="feature">
-      <div class="f-icon">📸</div>
-      <div class="f-title">Photo Upload</div>
-      <div class="f-desc">Snap a photo of any challan</div>
-    </div>
-    <div class="feature">
-      <div class="f-icon">🤖</div>
-      <div class="f-title">AI Extraction</div>
-      <div class="f-desc">Automatic data structuring</div>
-    </div>
-    <div class="feature">
-      <div class="f-icon">📄</div>
-      <div class="f-title">Invoice Output</div>
-      <div class="f-desc">Excel or PDF, GST-ready</div>
-    </div>
-  </div>
+  <div class="container">
 
-  <div class="card" style="margin-top: 1.5rem;">
-    <h2>Upload File</h2>
-    <div class="dropzone" id="dropzone">
-      <input type="file" id="fileInput" accept=".xlsx,.xls,.jpg,.jpeg,.png,.bmp,.tiff,.webp,.zip">
-      <div class="icon">📁</div>
-      <div class="label">Drag & drop or <strong>browse</strong></div>
-      <div class="label" style="font-size: 0.75rem; margin-top: 0.25rem;">Excel (.xlsx) &middot; Image (.jpg, .png) &middot; Zip (batch)</div>
-      <div class="file-name" id="fileName"></div>
-    </div>
-
-    <div class="form-row">
-      <div class="form-group">
-        <label>Invoice Number</label>
-        <input type="number" id="invNum" value="1" min="1" placeholder="1">
+    <!-- Nav -->
+    <nav class="nav animate-in">
+      <a href="/" class="nav-logo">Challan<span>AI</span></a>
+      <div class="nav-links">
+        <a href="#upload" class="nav-link">Upload</a>
+        <a href="https://github.com/prshv1/ChallanAI" target="_blank" rel="noopener" class="nav-link gh">
+          <svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          GitHub
+        </a>
       </div>
-      <div class="form-group">
-        <label>Output Format</label>
-        <select id="outputFormat">
-          <option value="xlsx">Excel (.xlsx)</option>
-          <option value="pdf">PDF</option>
-        </select>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero animate-in delay-1">
+      <div class="hero-eyebrow">
+        <span class="dot"></span>
+        Live &mdash; Free to use
+      </div>
+      <h1>Handwritten challans<br>to <em>GST invoices</em></h1>
+      <p class="hero-sub">Upload a photo or Excel file. AI extracts the data. Get a GST-compliant invoice in seconds.</p>
+      <div class="hero-badges">
+        <span class="hero-badge">GST Compliant</span>
+        <span class="hero-badge">AI + OCR</span>
+        <span class="hero-badge">Excel &amp; PDF</span>
+      </div>
+    </section>
+
+    <!-- Features -->
+    <div class="features-strip animate-in delay-2">
+      <div class="feature-cell">
+        <div class="f-num">01</div>
+        <div class="f-icon">📸</div>
+        <div class="f-title">Photo Upload</div>
+        <div class="f-desc">Snap a photo of any challan</div>
+      </div>
+      <div class="feature-cell">
+        <div class="f-num">02</div>
+        <div class="f-icon">🤖</div>
+        <div class="f-title">AI Extraction</div>
+        <div class="f-desc">Automatic data structuring</div>
+      </div>
+      <div class="feature-cell">
+        <div class="f-num">03</div>
+        <div class="f-icon">📄</div>
+        <div class="f-title">Invoice Output</div>
+        <div class="f-desc">Excel or PDF, GST-ready</div>
       </div>
     </div>
 
-    <div class="toggle-row">
-      <label class="toggle">
-        <input type="checkbox" id="pdfToggle">
-        <span class="slider"></span>
-      </label>
-      <span class="toggle-label">Generate PDF instead of Excel</span>
+    <!-- Main upload card -->
+    <div class="main-card animate-in delay-3" id="upload">
+      <div class="card-header">
+        <h2>Generate Invoice</h2>
+        <span class="step-indicator">STEP 1 → UPLOAD</span>
+      </div>
+      <div class="card-body">
+
+        <div class="dropzone" id="dropzone">
+          <input type="file" id="fileInput" accept=".xlsx,.xls,.jpg,.jpeg,.png,.bmp,.tiff,.webp,.zip">
+          <div class="dz-icon">↑</div>
+          <div class="dz-text">Drag &amp; drop or <strong>browse files</strong></div>
+          <div class="dz-hint">.xlsx · .jpg · .png · .zip (batch)</div>
+          <div class="dz-filename" id="fileName" style="display:none;"></div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Invoice Number</label>
+            <input type="number" id="invNum" value="1" min="1" placeholder="1">
+          </div>
+          <div class="form-group">
+            <label>Output Format</label>
+            <select id="outputFormat">
+              <option value="xlsx">Excel (.xlsx)</option>
+              <option value="pdf">PDF (.pdf)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="toggle-row">
+          <label class="toggle">
+            <input type="checkbox" id="pdfToggle">
+            <span class="slider"></span>
+          </label>
+          <span class="toggle-label">Generate PDF instead of Excel</span>
+        </div>
+
+        <button class="btn btn-primary" id="generateBtn" disabled>Generate Invoice</button>
+        <button class="btn btn-success" id="downloadBtn">↓ Download Invoice</button>
+
+        <div class="status" id="status"></div>
+
+      </div>
     </div>
 
-    <button class="btn btn-primary" id="generateBtn" disabled>Generate Invoice</button>
-    <button class="btn btn-success" id="downloadBtn">Download Invoice</button>
+    <!-- Footer -->
+    <footer class="footer animate-in delay-5">
+      <div class="footer-divider"></div>
+      <div class="footer-content">
+        <div class="footer-left">
+          <span class="footer-brand">ChallanAI</span> · Built for India's small businesses
+        </div>
+        <div class="footer-right">
+          <a href="https://linktr.ee/prshv1" target="_blank" rel="noopener" class="footer-link">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+            Contact
+          </a>
+          <a href="https://github.com/prshv1/ChallanAI" target="_blank" rel="noopener" class="footer-link">
+            <svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+            GitHub
+          </a>
+        </div>
+      </div>
+    </footer>
 
-    <div class="status" id="status"></div>
   </div>
-</div>
 
-<div class="footer">
-  Built for India's small businesses &middot; <a href="https://github.com/prshv1/ChallanAI" target="_blank">GitHub</a>
-</div>
-
-<script>
-const BASE_URL = '/api';
-
-const dropzone = document.getElementById('dropzone');
-const fileInput = document.getElementById('fileInput');
-const fileNameEl = document.getElementById('fileName');
-const invNum = document.getElementById('invNum');
-const outputFormat = document.getElementById('outputFormat');
-const pdfToggle = document.getElementById('pdfToggle');
-const generateBtn = document.getElementById('generateBtn');
-const downloadBtn = document.getElementById('downloadBtn');
-const statusEl = document.getElementById('status');
-
-let selectedFile = null;
-let downloadBlob = null;
-let downloadName = '';
-
-// Sync toggle with select
-pdfToggle.addEventListener('change', () => {
-  outputFormat.value = pdfToggle.checked ? 'pdf' : 'xlsx';
-});
-outputFormat.addEventListener('change', () => {
-  pdfToggle.checked = outputFormat.value === 'pdf';
-});
-
-// Drag & drop
-dropzone.addEventListener('click', () => fileInput.click());
-dropzone.addEventListener('dragover', e => { e.preventDefault(); dropzone.classList.add('dragover'); });
-dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragover'));
-dropzone.addEventListener('drop', e => {
-  e.preventDefault();
-  dropzone.classList.remove('dragover');
-  if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
-});
-fileInput.addEventListener('change', () => { if (fileInput.files.length) handleFile(fileInput.files[0]); });
-
-function handleFile(file) {
-  selectedFile = file;
-  fileNameEl.textContent = file.name;
-  generateBtn.disabled = false;
-  downloadBtn.style.display = 'none';
-  setStatus('', '');
-}
-
-function setStatus(msg, type) {
-  statusEl.className = 'status' + (type ? ' ' + type : '');
-  statusEl.innerHTML = msg;
-}
-
-function getEndpoint(file, format) {
-  const ext = file.name.split('.').pop().toLowerCase();
-  const isImage = ['jpg', 'jpeg', 'png', 'bmp', 'tiff', 'tif', 'webp'].includes(ext);
-  const isZip = ext === 'zip';
-
-  if (isZip) return '/batch';
-  if (isImage && format === 'pdf') return '/generate-from-image-pdf';
-  if (isImage) return '/generate-from-image';
-  if (format === 'pdf') return '/generate-pdf';
-  return '/generate';
-}
-
-generateBtn.addEventListener('click', async () => {
-  if (!selectedFile) return;
-
-  const format = outputFormat.value;
-  const endpoint = getEndpoint(selectedFile, format);
-  const num = parseInt(invNum.value) || 1;
-
-  const formData = new FormData();
-  formData.append('file', selectedFile);
-
-  if (endpoint === '/batch') {
-    formData.append('start_num', num);
-  } else {
-    formData.append('inv_num', num);
-  }
-
-  generateBtn.disabled = true;
-  downloadBtn.style.display = 'none';
-  setStatus('<span class="spinner"></span>Processing your file...', 'loading');
-
-  try {
-    const resp = await fetch(BASE_URL + endpoint, { method: 'POST', body: formData });
-
-    if (!resp.ok) {
-      const err = await resp.json().catch(() => ({ detail: 'Server error' }));
-      throw new Error(err.detail || `HTTP ${resp.status}`);
-    }
-
-    downloadBlob = await resp.blob();
-    const contentDisp = resp.headers.get('Content-Disposition') || '';
-    const match = contentDisp.match(/filename=(.+)/);
-    downloadName = match ? match[1] : `Invoice_${num}.${endpoint === '/batch' ? 'zip' : format}`;
-
-    setStatus('Invoice generated successfully!', 'success');
-    downloadBtn.style.display = 'block';
-  } catch (err) {
-    setStatus('Error: ' + err.message, 'error');
-  } finally {
-    generateBtn.disabled = false;
-  }
-});
-
-downloadBtn.addEventListener('click', () => {
-  if (!downloadBlob) return;
-  const url = URL.createObjectURL(downloadBlob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = downloadName;
-  a.click();
-  URL.revokeObjectURL(url);
-});
-</script>
+  <script src="app.js"></script>
 </body>
 </html>
